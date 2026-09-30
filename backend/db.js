@@ -1,6 +1,12 @@
 const { Pool } = require("pg");
+
+const rawDatabaseUrl = process.env.DATABASE_URL;
+const databaseUrl = rawDatabaseUrl
+  ? rawDatabaseUrl.replace(/([?&])sslmode=[^&]*&?/i, "$1").replace(/[?&]$/, "")
+  : rawDatabaseUrl;
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: databaseUrl,
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
   max: Number(process.env.DB_POOL_MAX || 10),
   idleTimeoutMillis: 30000,
